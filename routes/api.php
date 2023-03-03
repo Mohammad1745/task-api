@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/test', function () {
+    return response()->json([
+        'success' => true,
+        'message' => "Success"
+    ]);
 });
+
+require base_path('routes/api/auth.php');
+require base_path('routes/api/task.php');
