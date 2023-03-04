@@ -53,4 +53,39 @@ class TaskService extends Service
             return $this->responseError( $exception->getMessage());
         }
     }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function updateTask (array $data): array
+    {
+        try {
+            $task = Task::findOrFail($data['id']);
+            $task->update([
+                'title' => $data['title'],
+                'description' => $data['description']
+            ]);
+            return $this->responseSuccess('Task Updated Successfully!');
+        }
+        catch (\Exception $exception) {
+            return $this->responseError( $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function destroyTask (int $id): array
+    {
+        try {
+            $task = Task::findOrFail($id);
+            $task->delete();
+            return $this->responseSuccess('Task Deleted Successfully!');
+        }
+        catch (\Exception $exception) {
+            return $this->responseError( $exception->getMessage());
+        }
+    }
 }
