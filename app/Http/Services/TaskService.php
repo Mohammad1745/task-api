@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class TaskService extends Service
 {
@@ -12,7 +13,7 @@ class TaskService extends Service
     public function getList (): array
     {
         try {
-             $tasks = Task::all();
+             $tasks = Task::where('user_id', Auth::id())->get();
              return $this->responseSuccess('', ["tasks" => $tasks]);
         }
         catch (\Exception $exception) {
@@ -27,7 +28,7 @@ class TaskService extends Service
     public function getTask (int $id): array
     {
         try {
-             $task = Task::findOrFail($id);
+             $task = Task::where('user_id', Auth::id())->findOrFail($id);
              return $this->responseSuccess('', ["task" => $task]);
         }
         catch (\Exception $exception) {
@@ -43,7 +44,7 @@ class TaskService extends Service
     {
         try {
             Task::create([
-                'user_id' => 1,
+                'user_id' => Auth::id(),
                 'title' => $data['title'],
                 'description' => $data['description']
             ]);
@@ -61,7 +62,7 @@ class TaskService extends Service
     public function updateTask (array $data): array
     {
         try {
-            $task = Task::findOrFail($data['id']);
+            $task = Task::where('user_id', Auth::id())->findOrFail($data['id']);
             $task->update([
                 'title' => $data['title'],
                 'description' => $data['description']
@@ -80,7 +81,7 @@ class TaskService extends Service
     public function destroyTask (int $id): array
     {
         try {
-            $task = Task::findOrFail($id);
+            $task = Task::where('user_id', Auth::id())->findOrFail($id);
             $task->delete();
             return $this->responseSuccess('Task Deleted Successfully!');
         }
