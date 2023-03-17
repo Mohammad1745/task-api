@@ -12,17 +12,9 @@ use Illuminate\Http\JsonResponse;
 class AuthController extends Controller
 {
     /**
-     * @var AuthService
-     */
-    private AuthService $service;
-
-    /**
      * @param AuthService $service
      */
-    function __construct (AuthService $service)
-    {
-        $this->service = $service;
-    }
+    function __construct (private readonly AuthService $service) { }
 
     /**
      * @param LoginRequest $request

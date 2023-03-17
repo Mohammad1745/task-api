@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Jobs\SendEmailJob;
+use App\Jobs\SendMailJob;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -41,16 +42,17 @@ class AuthService extends Service
     public function processRegistration (array $data): array
     {
         try {
-            $code = "randomNumber(4)";
+            $code = $this->_randomNumber(4);
             $formattedData = [
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'verification_code' => $code,
                 'password' => Hash::make($data['password']),
             ];
-            $user = User::create($formattedData);
-//            $sendEmailJob = new SendEmailJob($user->email, $user->name, $code);
-//            dispatch($sendEmailJob);
+            $sendEmailJob = new SendMailJob($data['email'], $data['name'], $code);
+            dispatch($sendEmailJob);
+
+            User::create($formattedData);
 
             return $this->responseSuccess("Registration Successful! Please check email for code");
         }
@@ -95,5 +97,18 @@ class AuthService extends Service
         catch (\Exception $exception) {
             return $this->responseError($exception->getMessage());
         }
+    }
+
+    private function _randomNumber ($length = 10): string
+    {
+        $x = '123456789';
+        $c = strlen($x) - 1;
+        $response = '';
+        for ($i = 0; $i < $length; $i++) {
+            $y = rand(0, $c);
+            $response .= substr($x, $y, 1);
+        }
+
+        return $response;
     }
 }
